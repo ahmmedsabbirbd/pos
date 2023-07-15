@@ -64,6 +64,9 @@ class UserController extends Controller
     public function OTPVerify(OTPVerifyRequest $request) {
         $res = User::where($request->input())->count();
         if(1==$res) {
+            User::where($request->input())->update([
+                'otp'=>'0'
+            ]);
             return response()->json(['msg'=>'success','data'=>'Verified']);            
         } else {
             return response()->json(['msg'=>'success','fail'=>'unauthorazed']);
