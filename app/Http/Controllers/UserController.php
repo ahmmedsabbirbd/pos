@@ -86,7 +86,7 @@ class UserController extends Controller
             }
 
             User::where('email', $request->email)->update([
-                'otp'=>'0'
+                'otp'=>''
             ]);
 
             $token = JWTToken::CreateTokenSetPassword($request->email);
