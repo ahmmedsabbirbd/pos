@@ -89,7 +89,7 @@ class UserController extends Controller
                 'otp'=>'0'
             ]);
 
-            $token = JWTToken::CreateTokenSetPassword($request->emai);
+            $token = JWTToken::CreateTokenSetPassword($request->email);
 
             return response()->json([
                 'status'=>'success',
@@ -104,7 +104,7 @@ class UserController extends Controller
     public function SetPassword(SetPasswordRequest $request) {
         try {
             $email = $request->header('email');
-            $password = $request->input('password');
+            $password = $request->password;
             User::where('email', $email)->update([
                 'password'=>$password
             ]);

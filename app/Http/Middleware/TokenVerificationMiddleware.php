@@ -26,7 +26,7 @@ class TokenVerificationMiddleware
                 'status'=>'failed',
                 'message'=>'unauthorized',
             ], 401);
-        } else {
+        } else { 
             $request->headers->set('email', $result);
             return $next($request);
         }        

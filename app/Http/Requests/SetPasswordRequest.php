@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SetPasswordRequest extends FormRequest
 {
@@ -22,7 +24,25 @@ class SetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'password' => 'required|string|max:50',
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'password.required' => 'Password is required.',
+            'password.string' => 'Password must be a string.',
+            'password.max' => 'Password may not exceed :max characters.', 
+        ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'The given data is invalid.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }
