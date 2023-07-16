@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/UserLogin', [UserController::class, 'UserLogin']);
-Route::post('/UserRegistration', [UserController::class, 'UserRegistration']);
-Route::post('/UserSendOTPToEmail', [UserController::class, 'UserSendOTPToEmail']);
-Route::post('/OTPVerify', [UserController::class, 'OTPVerify']);
-Route::post('/SetPassword', [UserController::class, 'SetPassword']);
-Route::post('/ProfileUpdate', [UserController::class, 'ProfileUpdate']);
+Route::post('/user-login', [UserController::class, 'UserLogin']);
+Route::post('/user-registration', [UserController::class, 'UserRegistration']);
+Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
+Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
+
+
+Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);

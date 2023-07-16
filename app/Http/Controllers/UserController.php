@@ -10,6 +10,8 @@ use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\UserSendOTPToEmailRequest;
 use App\Mail\OTPEmail;
 use App\Models\User;
+use App\Traits\HttpResponses;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -17,29 +19,40 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
+    use HttpResponses;
     public function UserLogin(UserLoginRequest $request) {
-        $res = User::where($request->input())->count();
+        $res = User::where('email', $request->email)
+        ->where('password', $request->password)
+        ->count();
 
         if($res==1) {
             $token = JWTToken::CreateToken($request->email);
+
             return response()->json([
-                'msg'=>'success',
-                'data'=>$token
+                'status'=>'success',
+                'message'=>'User Login Successful',
+                'token'=>$token
             ]);
         }
-        return response()->json([
-            'msg'=>'failed',
-            'data'=>'unauthorzies'
-        ]);;
+        return $this->error('unauthorzies');
 
     }
 
     public function UserRegistration(UserRegistrationRequest $request) {
-        $user = User::create($request->input());        
-        if($user) {
-            return 1;
+
+        try {
+            User::create([
+                'fristName' => $request->fristName,
+                'lastName' => $request->lastName,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'password' => $request->password,
+            ]);
+
+            return $this->success('User Registration Success', 201);
+        } catch (Exception $e) {
+            return $this->error('User Registration Failed');
         }
-        return 0;
     }
 
     public function UserSendOTPToEmail(UserSendOTPToEmailRequest $request) {
@@ -47,43 +60,57 @@ class UserController extends Controller
         
         try {
             // Mail Send
-            $OTPEmail = Mail::to($request->email)->send(new OTPEmail($otp));
+            Mail::to($request->email)->send(new OTPEmail($otp));
     
             // Database Update
-            $OTPEmailDatabase = User::where('email', $request->email)
+            User::where('email', $request->email)
             ->update([
                 'otp'=> $otp,
             ]);
-            return response()->json(['msg'=>'success','data'=>'Email Sended']);
+            return $this->success('4 digit code send to your email');
         } catch (Exception $e) {
-            return response()->json(['msg'=>'success','fail'=>'unauthorazed']);
+            return $this->error('Some Think went worng');
         }
         
     }
     
     public function OTPVerify(OTPVerifyRequest $request) {
-        $res = User::where($request->input())->count();
-        if(1==$res) {
-            User::where($request->input())->update([
+        $res = User::where('email', $request->email)
+        ->where('otp', $request->otp)
+        ->first();
+
+        if($res) {
+            $timeDifference = Carbon::now('Asia/Dhaka')->diffInMinutes(Carbon::parse($res['updated_at']));
+            if($timeDifference > 5) {
+                return $this->error('Time expired');
+            }
+
+            User::where('email', $request->email)->update([
                 'otp'=>'0'
             ]);
-            return response()->json(['msg'=>'success','data'=>'Verified']);            
-        } else {
-            return response()->json(['msg'=>'success','fail'=>'unauthorazed']);
-        }
-    }
-    public function SetPassword(SetPasswordRequest $request) {
-        $res = User::where($request->input())->update([
-            'password'=>$request->password
-        ]);
-        if(1==$res) {
-            return response()->json(['msg'=>'success','data'=>'Password Updated']);            
-        } else {
-            return response()->json(['msg'=>'success','fail'=>'unauthorazed']);
-        }
-    }
 
-    public function ProfileUpdate() {
-        
+            $token = JWTToken::CreateTokenSetPassword($request->emai);
+
+            return response()->json([
+                'status'=>'success',
+                'message'=>'OTP Verification Successful',
+                'token'=>$token
+            ]);            
+        } else {
+            return $this->error('unauthorazed');
+        }
+    }
+    
+    public function SetPassword(SetPasswordRequest $request) {
+        try {
+            $email = $request->header('email');
+            $password = $request->input('password');
+            User::where('email', $email)->update([
+                'password'=>$password
+            ]);
+            return $this->success('Password Updated', 201);
+        } catch(Exception $e) {
+            return $this->success('SomeThink Went Worng', 501);;            
+        }
     }
 }
