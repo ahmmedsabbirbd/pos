@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -14,11 +15,18 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+// API Routes
 Route::post('/user-login', [UserController::class, 'UserLogin']);
 Route::post('/user-registration', [UserController::class, 'UserRegistration']);
 Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
 Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
-
-
 Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
+
+// Page Routes
+Route::get('/userLogin',[UserController::class,'LoginPage']);
+Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
+Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
+Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
+Route::get('/resetPassword',[UserController::class,'ResetPasswordPage']);
+
+Route::get('/dashboard',[DashboardController::class,'DashboardPage']);

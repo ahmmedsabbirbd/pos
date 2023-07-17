@@ -20,6 +20,26 @@ use PhpParser\Node\Stmt\TryCatch;
 class UserController extends Controller
 {
     use HttpResponses;
+
+    function LoginPage() {
+        return view('pages.auth.login-page');
+    }
+
+    function RegistrationPage() {
+        return view('pages.auth.registration-page');
+    }
+    function SendOtpPage() {
+        return view('pages.auth.send-otp-page');
+    }
+    function VerifyOTPPage() {
+        return view('pages.auth.verify-otp-page');
+    }
+
+    function ResetPasswordPage() {
+        return view('pages.auth.reset-pass-page');
+    }
+
+
     public function UserLogin(UserLoginRequest $request) {
         $res = User::where('email', $request->email)
         ->where('password', $request->password)
