@@ -25,7 +25,7 @@ class OTPVerifyRequest extends FormRequest
     {
         return [ 
             'email' => 'required|email|max:50|exists:users,email',
-            'otp' => 'required|string|max:5'
+            'otp' => 'required|string|max:5|min:4'
         ];
     }
     public function messages(): array
@@ -38,6 +38,7 @@ class OTPVerifyRequest extends FormRequest
             'otp.required' => 'The otp field is required.',
             'email.string' => 'Please enter a valid string.',
             'otp.max' => 'The otp may not exceed :max characters.',
+            'otp.min' => 'The otp may not exceed :min characters.',
         ];
     }
 
@@ -47,6 +48,6 @@ class OTPVerifyRequest extends FormRequest
             'success' => false,
             'message' => 'The given data is invalid.',
             'errors' => $validator->errors(),
-        ], 422));
+        ], 200));
     }
 }

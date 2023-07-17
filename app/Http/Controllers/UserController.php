@@ -113,8 +113,8 @@ class UserController extends Controller
             return response()->json([
                 'status'=>'success',
                 'message'=>'OTP Verification Successful',
-                'token'=>$token
-            ]);            
+                // 'token'=>$token // when working mobile app desktop
+            ])->cookie('token', $token, 60*60*2);            
         } else {
             return $this->error('unauthorazed');
         }
@@ -127,9 +127,9 @@ class UserController extends Controller
             User::where('email', $email)->update([
                 'password'=>$password
             ]);
-            return $this->success('Password Updated', 201);
+            return $this->success('Password Updated', 200);
         } catch(Exception $e) {
-            return $this->success('SomeThink Went Worng', 501);;            
+            return $this->success('SomeThink Went Worng');;            
         }
     }
 }

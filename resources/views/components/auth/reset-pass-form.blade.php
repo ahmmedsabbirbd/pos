@@ -9,7 +9,7 @@
                     <input placeholder="New Password" class="form-control" type="password"/>
                     <br/>
                     <label>Confirm Password</label>
-                    <input  placeholder="Confirm Password" class="form-control" type="password"/>
+                    <input id="password" placeholder="Confirm Password" class="form-control" type="password"/>
                     <br/>
                     <button onclick="ResetPass()" class="btn w-100  btn-primary">Next</button>
                 </div>
@@ -19,7 +19,34 @@
 </div>
 
 <script>
-    function ResetPass() {
+    const ResetPass =async ()=> {
+        let password=document.getElementById('password').value;
+        
+        if (password === "" || password.length > 50) {
+            errorToast("Please enter a password (maximum 50 characters).");
+        } else {
+            showLoader()
+            let res = await axios.post('/set-password', {
+                'password': password,
+            });
+            hideLoader()
+            if(!res.data.status) {
+                Object.keys(res.data.errors).forEach(function(field) {
+                    let errorMessages = res.data.errors[field];
+                    errorMessages.forEach(function(errorMessage) {
+                        errorToast(`${errorMessage} `);
+                    });
+                });
+            }
 
-    }
+            if(res.data.status == 'failed') {
+                errorToast(res.data.message); 
+            }
+            
+            if(res.data.status == 'success') { 
+                successToast(res.data.message)
+                window.location.href = "/userLogin";
+            }
+        }
+    } 
 </script>

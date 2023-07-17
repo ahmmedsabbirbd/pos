@@ -17,7 +17,9 @@ class TokenVerificationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->header('token');
+        // $token = $request->header('token'); // when work mobile desktop app
+        
+        $token = $request->cookie('token');
 
         $result = JWTToken::DecodeToken($token);
         
