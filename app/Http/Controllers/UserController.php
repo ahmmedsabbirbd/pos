@@ -50,9 +50,8 @@ class UserController extends Controller
 
             return response()->json([
                 'status'=>'success',
-                'message'=>'User Login Successful',
-                'token'=>$token
-            ]);
+                'message'=>'User Login Successful'
+            ])->cookie('token', $token, 60*60*24);
         }
         return $this->error('unauthorzies');
 
@@ -69,7 +68,7 @@ class UserController extends Controller
                 'password' => $request->password,
             ]);
 
-            return $this->success('User Registration Success', 201);
+            return $this->success('User Registration Success');
         } catch (Exception $e) {
             return $this->error('User Registration Failed');
         }

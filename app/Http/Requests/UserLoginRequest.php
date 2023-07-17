@@ -48,6 +48,6 @@ class UserLoginRequest extends FormRequest
             'success' => false,
             'message' => 'The given data is invalid.',
             'errors' => $validator->errors(),
-        ], 422));
+        ], 200));
     }
 }
