@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,7 @@ Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage']);
 
 Route::get('/dashboard',[DashboardController::class,'DashboardPage']);
+
+// Login With facebook
+Route::get( 'auth/facebook', [SocialiteController::class, 'facebookRedirect'] )->name( 'facebook.login' );
+Route::get( 'auth/facebook/callback', [SocialiteController::class, 'facebookCallback'] );
