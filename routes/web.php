@@ -35,3 +35,6 @@ Route::get('/dashboard',[DashboardController::class,'DashboardPage']);
 // Login With facebook
 Route::get( 'auth/facebook', [SocialiteController::class, 'facebookRedirect'] )->name( 'facebook.login' );
 Route::get( 'auth/facebook/callback', [SocialiteController::class, 'facebookCallback'] );
+// Login With google
+Route::get( 'auth/google', [SocialiteController::class, 'googleRedirect'] )->name( 'google.login' );
+Route::get( 'auth/google/callback', [SocialiteController::class, 'googleCallback'] );

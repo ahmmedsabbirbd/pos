@@ -27,4 +27,21 @@ class SocialiteController extends Controller
             dd($e->getMessage());
         }
     }
+    public function googleRedirect()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function googleCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->user();
+            
+            // dd($user);
+
+            return redirect()->route('dashboard');
+        } catch(Exception $e) {
+            dd($e->getMessage());
+        }
+    }
 }

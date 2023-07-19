@@ -13,7 +13,9 @@
                     <hr/>
                     <div class="float-end mt-3">
                         <span>
-                            <a class="text-center ms-3 h6" href="{{route('facebook.login')}}">Login With Facebook</a>
+                            <a class="text-center ms-3 h6" href="{{route('google.login')}}">Google+</a>
+                            <span class="ms-1">|</span>
+                            <a class="text-center ms-3 h6" href="{{route('facebook.login')}}">Facebook+</a>
                             <span class="ms-1">|</span>
                             <a class="text-center ms-3 h6" href="{{url('/userRegistration')}}">Sign Up </a>
                             <span class="ms-1">|</span>
