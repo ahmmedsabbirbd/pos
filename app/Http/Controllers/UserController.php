@@ -38,15 +38,19 @@ class UserController extends Controller
     function ResetPasswordPage() {
         return view('pages.auth.reset-pass-page');
     }
+    function ProfilePage() {
+        return view('pages.dashboard.profile-page');
+    }
 
 
     public function UserLogin(UserLoginRequest $request) {
         $res = User::where('email', $request->email)
         ->where('password', $request->password)
-        ->count();
-
-        if($res==1) {
-            $token = JWTToken::CreateToken($request->email);
+        ->select('id')
+        ->first();
+        
+        if(null!==$res) {
+            $token = JWTToken::CreateToken($request->email, $res->id);
 
             return response()->json([
                 'status'=>'success',
@@ -136,4 +140,9 @@ class UserController extends Controller
     public function userLogout() {
         return redirect('/userLogin')->cookie('token', '', -1); 
     }
+    
+    public function profileUpdate() {
+        return "Good"; 
+    }
+    
 }

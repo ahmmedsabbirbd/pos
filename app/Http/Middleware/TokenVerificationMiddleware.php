@@ -29,7 +29,8 @@ class TokenVerificationMiddleware
             // ], 401);
             return redirect('/userLogin');
         } else { 
-            $request->headers->set('email', $result);
+            $request->headers->set('email', $result->user);
+            $request->headers->set('id', $result->userId);
             return $next($request);
         }        
     }
