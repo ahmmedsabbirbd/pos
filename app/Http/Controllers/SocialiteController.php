@@ -37,7 +37,7 @@ class SocialiteController extends Controller
         try {
             $user = Socialite::driver('google')->user();
             
-            // dd($user);
+            dd($user);
 
             return redirect()->route('dashboard');
         } catch(Exception $e) {
