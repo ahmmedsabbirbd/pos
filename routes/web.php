@@ -23,14 +23,25 @@ Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEma
 Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
 Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
 
+
+
+
+
+
+
+// Logout
+Route::get('/logout',[UserController::class,'userLogout'])->middleware(TokenVerificationMiddleware::class);
+
 // Page Routes
-Route::get('/userLogin',[UserController::class,'LoginPage']);
+Route::get('/userLogin',[UserController::class,'LoginPage'])->name('login');
 Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
 Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
 Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
-Route::get('/resetPassword',[UserController::class,'ResetPasswordPage']);
+Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware(TokenVerificationMiddleware::class);
 
-Route::get('/dashboard',[DashboardController::class,'DashboardPage']);
+
+
+Route::get('/dashboard',[DashboardController::class,'DashboardPage'])->middleware(TokenVerificationMiddleware::class);
 
 // Login With facebook
 Route::get( 'auth/facebook', [SocialiteController::class, 'facebookRedirect'] )->name( 'facebook.login' );

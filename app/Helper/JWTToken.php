@@ -33,12 +33,16 @@ class JWTToken {
     }
 
     public static function DecodeToken($token) {
-        try {
-            $key = env('JWT_KEY');
-            $decode = JWT::decode($token, new Key($key, 'HS256'));   
-            return $decode->user;
-        } catch (Exception $e) {
-            return "unauthorized";
+        if(null==$token) {
+            return 'unauthorized';
+        } else {
+            try {
+                $key = env('JWT_KEY');
+                $decode = JWT::decode($token, new Key($key, 'HS256'));   
+                return $decode->user;
+            } catch (Exception $e) {
+                return "unauthorized";
+            }
         }
     }
 }

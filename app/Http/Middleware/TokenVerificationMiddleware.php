@@ -20,14 +20,14 @@ class TokenVerificationMiddleware
         // $token = $request->header('token'); // when work mobile desktop app
         
         $token = $request->cookie('token');
-
         $result = JWTToken::DecodeToken($token);
         
         if($result=='unauthorized') {
-            return response()->json([
-                'status'=>'failed',
-                'message'=>'unauthorized',
-            ], 401);
+            // return response()->json([
+            //     'status'=>'failed',
+            //     'message'=>'unauthorized',
+            // ], 401);
+            return redirect('/userLogin');
         } else { 
             $request->headers->set('email', $result);
             return $next($request);

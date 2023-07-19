@@ -132,4 +132,8 @@ class UserController extends Controller
             return $this->success('SomeThink Went Worng');;            
         }
     }
+    
+    public function userLogout() {
+        return redirect('/userLogin')->cookie('token', '', -1); 
+    }
 }
