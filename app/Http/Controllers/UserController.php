@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Exception;
+use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use PhpParser\Node\Stmt\TryCatch;
@@ -146,7 +147,7 @@ class UserController extends Controller
         try {
             $id = $request->header('id');
             $user = User::where('id','=', $id)
-                ->select('fristName', 'lastName', 'email', 'mobile', 'password')
+                ->select('fristName', 'lastName', 'email', 'mobile', 'avatar', 'password')
                 ->first();
 
             return response()->json([
@@ -162,18 +163,32 @@ class UserController extends Controller
     public function profileUpdate(Request $request, ProfileUpdateRequest $updateRequest) {
         try {
             $id = $request->header('id');
+            $profile = $request->file('avatar');
+
+            if($profile) {
+                $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
+                $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+
+                $profileImage->save(public_path('avatars/'.$profileName));
+            } else {
+                $profileName = $updateRequest->haveAvatarUrl;
+            }
+
             User::where('id','=', $id)
-                ->update([
-                    'fristName' => $updateRequest->fristName,
-                    'lastName' => $updateRequest->lastName,
-                    'mobile' => $updateRequest->mobile,
-                    'password' => $updateRequest->password
-                ]);
+            ->update([
+                'fristName' => $updateRequest->fristName,
+                'lastName' => $updateRequest->lastName,
+                'mobile' => $updateRequest->mobile,
+                'password' => $updateRequest->password,
+                'avatar' =>  $profileName
+            ]);
 
             return $this->success('Profile Updated', 200);
         } catch (Exception $e) {
             return $this->error('Profile no Updated');
         }
     }
-
 }

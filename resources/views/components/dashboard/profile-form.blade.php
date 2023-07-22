@@ -29,6 +29,15 @@
                             </div>
                         </div>
                         <div class="row m-0 p-0">
+                            <!-- Avatar Upload Field -->
+                            <div class="col-md-4 p-2">
+                                <label>Avatar</label>
+                                <input id="avatar" class="form-control" type="file" accept="image/*"/>
+                                <!-- Avatar Preview -->
+                                <img id="avatar-preview" src="#" alt="Avatar Preview" class="img-fluid" style="max-height: 150px;">
+                            </div>
+                        </div>
+                        <div class="row m-0 p-0">
                             <div class="col-md-4 p-2" style="margin-left: auto;">
                                 <button onclick="ProfileUpdate()" class="btn mt-3 w-100  btn-primary">Update</button>
                             </div>
@@ -52,6 +61,7 @@
             document.getElementById('fristName').value =res.data.data['fristName'];
             document.getElementById('lastName').value =res.data.data['lastName'];
             document.getElementById('mobile').value =res.data.data['mobile'];
+            document.getElementById('avatar-preview').src =`avatars/${res.data.data['avatar']}`;
         } catch (e) {
             hideLoader()
             errorToast('Somethink Went Worng')
@@ -64,6 +74,17 @@
         let fristName=document.getElementById('fristName').value;
         let lastName=document.getElementById('lastName').value;
         let mobile=document.getElementById('mobile').value;
+        let avatarInput=document.getElementById('avatar');
+        let haveAvatar=document.getElementById('avatar-preview').src;
+        let haveAvatarUrl = haveAvatar.substring(haveAvatar.lastIndexOf('/') + 1);
+
+        const formData = new FormData();
+        formData.append('fristName', fristName);
+        formData.append('lastName', lastName);
+        formData.append('mobile', mobile);
+        formData.append('password', password);
+        formData.append('avatar', avatarInput.files[0]);
+        formData.append('haveAvatar', haveAvatarUrl);
 
 
         if (fristName === "" || fristName.length > 20) {
@@ -76,11 +97,10 @@
             errorToast("Please enter a password (maximum 50 characters).");
         } else {
             showLoader()
-            let res = await axios.post('/profile-update', {
-                'password': password,
-                'fristName': fristName,
-                'lastName': lastName,
-                'mobile': mobile,
+            let res = await axios.post('/profile-update', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             hideLoader()
             if(!res.data.status) {

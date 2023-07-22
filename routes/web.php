@@ -40,6 +40,7 @@ Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
 Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/user-profile',[UserController::class,'ProfilePage'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/photo-update',[UserController::class,'processImage'])->middleware(TokenVerificationMiddleware::class);
 
 
 
