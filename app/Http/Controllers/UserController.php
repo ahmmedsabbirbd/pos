@@ -161,6 +161,18 @@ class UserController extends Controller
         }
     }
 
+    public function DashBoardImage(Request $request) {
+        try {
+            $id = $request->header('id');
+            $image = User::where('id','=', $id)
+                ->select('avatar')
+                ->first();
+            return $image->avatar;
+        } catch (Exception $e) {
+            return $this->error('SomeThink Went Worng');
+        }
+    }
+
     public function profileUpdate(Request $request, ProfileUpdateRequest $updateRequest) {
         try {
             $id = $request->header('id');

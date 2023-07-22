@@ -119,6 +119,7 @@
             if(res.data.status == 'success') {
                 successToast(res.data.message)
                 ProfileDetails()
+                DashBoardImage()
             }
         }
     }

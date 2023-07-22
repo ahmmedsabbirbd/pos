@@ -35,10 +35,10 @@
 
         <div class="float-right h-auto d-flex">
             <div class="user-dropdown">
-                <img class="icon-nav-img" src="{{asset('images/user.webp')}}" alt=""/>
+                <img class="icon-nav-img" id="DashBoardImage" src="{{asset('images/user.webp')}}" alt=""/>
                 <div class="user-dropdown-content ">
                     <div class="mt-4 text-center">
-                        <img class="icon-nav-img" src="{{asset('images/user.webp')}}" alt=""/>
+                        <img class="icon-nav-img"  id="DashBoardImage2"src="{{asset('images/user.webp')}}" alt=""/>
                         <h6>User Name</h6>
                         <hr class="user-dropdown-divider  p-0"/>
                     </div>
@@ -81,6 +81,17 @@
             content.classList.add("content");
         }
     }
+
+    const DashBoardImage =async ()=> {
+        let res = await axios.get('/dashboard-image')
+        if(res) {
+            document.getElementById('DashBoardImage').src =`avatars/${res.data}`;
+            document.getElementById('DashBoardImage2').src =`avatars/${res.data}`;
+        } else  {
+            document.getElementById('DashBoardImage').src ='images/user.webp';
+        }
+    }
+    DashBoardImage()
 </script>
 
 </body>
