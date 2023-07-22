@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -172,7 +173,19 @@ class UserController extends Controller
                     $constraint->upsize();
                 });
 
-                $profileImage->save(public_path('avatars/'.$profileName));
+                if($profileImage->save(public_path('avatars/'.$profileName))) {
+                    $currentPhoto = User::where('id', '=', $id)
+                        ->select('avatar')
+                        ->first();
+
+                    if($currentPhoto) {
+                        $avatarFilename = $currentPhoto->avatar;
+                        $filePath = public_path('avatars/' . $avatarFilename);
+                        if (File::exists($filePath)) {
+                            File::delete($filePath);
+                        }
+                    }
+                }
             } else {
                 $profileName = $updateRequest->haveAvatarUrl;
             }
