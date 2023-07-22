@@ -178,38 +178,41 @@ class UserController extends Controller
             $id = $request->header('id');
             $profile = $request->file('avatar');
 
-            if($profile) {
-                $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
-                $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+            DB::transaction(function () {
 
-                if($profileImage->save(public_path('avatars/'.$profileName))) {
-                    $currentPhoto = User::where('id', '=', $id)
-                        ->select('avatar')
-                        ->first();
+                if($profile) {
+                    $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
+                    $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
 
-                    if($currentPhoto) {
-                        $avatarFilename = $currentPhoto->avatar;
-                        $filePath = public_path('avatars/' . $avatarFilename);
-                        if (File::exists($filePath)) {
-                            File::delete($filePath);
+                    if($profileImage->save(public_path('avatars/'.$profileName))) {
+                        $currentPhoto = User::where('id', '=', $id)
+                            ->select('avatar')
+                            ->first();
+
+                        if($currentPhoto) {
+                            $avatarFilename = $currentPhoto->avatar;
+                            $filePath = public_path('avatars/' . $avatarFilename);
+                            if (File::exists($filePath)) {
+                                File::delete($filePath);
+                            }
                         }
                     }
+                } else {
+                    $profileName = $updateRequest->haveAvatarUrl;
                 }
-            } else {
-                $profileName = $updateRequest->haveAvatarUrl;
-            }
 
-            User::where('id','=', $id)
-            ->update([
-                'fristName' => $updateRequest->fristName,
-                'lastName' => $updateRequest->lastName,
-                'mobile' => $updateRequest->mobile,
-                'password' => $updateRequest->password,
-                'avatar' =>  $profileName
-            ]);
+                User::where('id','=', $id)
+                ->update([
+                    'fristName' => $updateRequest->fristName,
+                    'lastName' => $updateRequest->lastName,
+                    'mobile' => $updateRequest->mobile,
+                    'password' => $updateRequest->password,
+                    'avatar' =>  $profileName
+                ]);
+            });
 
             return $this->success('Profile Updated', 200);
         } catch (Exception $e) {
