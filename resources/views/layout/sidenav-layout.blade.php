@@ -84,7 +84,7 @@
 
     const DashBoardImage =async ()=> {
         let res = await axios.get('/dashboard-image')
-        if(res) {
+        if(res.data!=="") {
             document.getElementById('DashBoardImage').src =`avatars/${res.data}`;
             document.getElementById('DashBoardImage2').src =`avatars/${res.data}`;
         } else  {
