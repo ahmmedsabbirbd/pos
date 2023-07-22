@@ -22,9 +22,9 @@ Route::post('/user-registration', [UserController::class, 'UserRegistration']);
 Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
 Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
 Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
-Route::get('/profile-update', [UserController::class, 'profileUpdate'])->middleware(TokenVerificationMiddleware::class);
 
-
+Route::get('/profile-details', [UserController::class, 'profileDetails'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/profile-update', [UserController::class, 'profileUpdate'])->middleware(TokenVerificationMiddleware::class);
 
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helper\JWTToken;
 use App\Http\Requests\OTPVerifyRequest;
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
@@ -48,13 +49,13 @@ class UserController extends Controller
         ->where('password', $request->password)
         ->select('id')
         ->first();
-        
+
         if(null!==$res) {
             $token = JWTToken::CreateToken($request->email, $res->id);
 
             return response()->json([
                 'status'=>'success',
-                'message'=>'User Login Successful'
+                'message'=>'User Login Successful',
             ])->cookie('token', $token, 60*60*24);
         }
         return $this->error('unauthorzies');
@@ -80,11 +81,11 @@ class UserController extends Controller
 
     public function UserSendOTPToEmail(UserSendOTPToEmailRequest $request) {
         $otp = rand(1000, 9999);
-        
+
         try {
             // Mail Send
             Mail::to($request->email)->send(new OTPEmail($otp));
-    
+
             // Database Update
             User::where('email', $request->email)
             ->update([
@@ -94,9 +95,9 @@ class UserController extends Controller
         } catch (Exception $e) {
             return $this->error('Some Think went worng');
         }
-        
+
     }
-    
+
     public function OTPVerify(OTPVerifyRequest $request) {
         $res = User::where('email', $request->email)
         ->where('otp', $request->otp)
@@ -118,12 +119,12 @@ class UserController extends Controller
                 'status'=>'success',
                 'message'=>'OTP Verification Successful',
                 // 'token'=>$token // when working mobile app desktop
-            ])->cookie('token', $token, 60*60*2);            
+            ])->cookie('token', $token, 60*60*2);
         } else {
             return $this->error('unauthorazed');
         }
     }
-    
+
     public function SetPassword(SetPasswordRequest $request) {
         try {
             $email = $request->header('email');
@@ -133,16 +134,46 @@ class UserController extends Controller
             ]);
             return $this->success('Password Updated', 200);
         } catch(Exception $e) {
-            return $this->success('SomeThink Went Worng');;            
+            return $this->success('SomeThink Went Worng');
         }
     }
-    
+
     public function userLogout() {
-        return redirect('/userLogin')->cookie('token', '', -1); 
+        return redirect('/userLogin')->cookie('token', '', -1);
     }
-    
-    public function profileUpdate() {
-        return "Good"; 
+
+    public function profileDetails(Request $request) {
+        try {
+            $id = $request->header('id');
+            $user = User::where('id','=', $id)
+                ->select('fristName', 'lastName', 'email', 'mobile', 'password')
+                ->first();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Request Successful',
+                'data' => $user
+            ],200);
+        } catch (Exception $e) {
+            return $this->error('SomeThink Went Worng');
+        }
     }
-    
+
+    public function profileUpdate(Request $request, ProfileUpdateRequest $updateRequest) {
+        try {
+            $id = $request->header('id');
+            User::where('id','=', $id)
+                ->update([
+                    'fristName' => $updateRequest->fristName,
+                    'lastName' => $updateRequest->lastName,
+                    'mobile' => $updateRequest->mobile,
+                    'password' => $updateRequest->password
+                ]);
+
+            return $this->success('Profile Updated', 200);
+        } catch (Exception $e) {
+            return $this->error('Profile no Updated');
+        }
+    }
+
 }
