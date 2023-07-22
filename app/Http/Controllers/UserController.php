@@ -134,7 +134,7 @@ class UserController extends Controller
             ]);
             return $this->success('Password Updated', 200);
         } catch(Exception $e) {
-            return $this->success('SomeThink Went Worng');
+            return $this->error('SomeThink Went Worng');
         }
     }
 
