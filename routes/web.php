@@ -16,23 +16,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-// API Routes
-Route::post('/user-login', [UserController::class, 'UserLogin']);
-Route::post('/user-registration', [UserController::class, 'UserRegistration']);
-Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
-Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
-Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
-
-Route::get('/profile-details', [UserController::class, 'profileDetails'])->middleware(TokenVerificationMiddleware::class);
-Route::post('/profile-update', [UserController::class, 'profileUpdate'])->middleware(TokenVerificationMiddleware::class);
-
-
-
-
-
-// Logout
-Route::get('/logout',[UserController::class,'userLogout'])->middleware(TokenVerificationMiddleware::class);
-
 // Page Routes
 Route::get('/userLogin',[UserController::class,'LoginPage'])->name('login');
 Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
@@ -45,6 +28,26 @@ Route::get('/dashboard-image',[UserController::class,'DashBoardImage'])->middlew
 
 
 
+// API Routes
+Route::post('/user-login', [UserController::class, 'UserLogin']);
+Route::post('/user-registration', [UserController::class, 'UserRegistration']);
+Route::post('/user-send-otp-to-email', [UserController::class, 'UserSendOTPToEmail']);
+Route::post('/otp-verify', [UserController::class, 'OTPVerify']);
+Route::post('/set-password', [UserController::class, 'SetPassword'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/profile-details', [UserController::class, 'profileDetails'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/profile-update', [UserController::class, 'profileUpdate'])->middleware(TokenVerificationMiddleware::class);
+
+
+
+// Customer API Routes
+
+
+
+// Category API Routes
+
+
+// Logout
+Route::get('/logout',[UserController::class,'userLogout'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/dashboard',[DashboardController::class,'DashboardPage'])->middleware(TokenVerificationMiddleware::class);
 
 // Login With facebook

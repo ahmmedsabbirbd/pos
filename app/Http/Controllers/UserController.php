@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
@@ -178,6 +179,8 @@ class UserController extends Controller
             $id = $request->header('id');
             $profile = $request->file('avatar');
 
+            DB::beginTransaction(); // Start the database transaction
+
             if($profile) {
                 $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
                 $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
@@ -210,9 +213,11 @@ class UserController extends Controller
                 'password' => $updateRequest->password,
                 'avatar' =>  $profileName
             ]);
+            DB::commit(); // All database operations are successful, commit the transaction
 
             return $this->success('Profile Updated', 200);
         } catch (Exception $e) {
+            DB::rollback(); // An error occurred, rollback the transaction
             return $this->error('Profile no Updated');
         }
     }
