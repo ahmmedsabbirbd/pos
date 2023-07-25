@@ -49,7 +49,6 @@ class SendEmailOTPJob implements ShouldQueue
             ->update([
                 'otp' => $this->otp,
             ]);
-        echo $this->attempts();
     }
 
     public function failed(Exception $failed)
