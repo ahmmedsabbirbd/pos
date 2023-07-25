@@ -9,14 +9,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Exception;
 
 class SendEmailOTPJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $otp;
-    public $email;
+    protected $otp;
+    protected $email;
+
+    public $tries = 3;
+    public $retryAfter = 60;
 
     /**
      * Create a new job instance.
@@ -32,14 +37,23 @@ class SendEmailOTPJob implements ShouldQueue
      */
     public function handle(): void
     {
+        /*if ('8' > $this->attempts()) {
+            throw new Exception('kire');
+        }*/
+
         // Mail Send
         Mail::to($this->email)->send(new OTPEmail($this->otp));
 
         // Database Update
         User::where('email', $this->email)
             ->update([
-                'otp' => $this->otp, // Remove extra dollar sign $
+                'otp' => $this->otp,
             ]);
+        echo $this->attempts();
+    }
 
+    public function failed(Exception $failed)
+    {
+        Log::error('Job failed finally: '.$failed->getMessage());
     }
 }
