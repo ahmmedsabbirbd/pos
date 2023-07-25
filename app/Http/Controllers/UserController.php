@@ -9,7 +9,7 @@ use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\UserSendOTPToEmailRequest;
-use App\Mail\OTPEmail;
+use App\Jobs\SendEmailOTPJob;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
@@ -86,14 +84,8 @@ class UserController extends Controller
         $otp = rand(1000, 9999);
 
         try {
-            // Mail Send
-            Mail::to($request->email)->send(new OTPEmail($otp));
+            SendEmailOTPJob::dispatch($request->email, $otp);
 
-            // Database Update
-            User::where('email', $request->email)
-            ->update([
-                'otp'=> $otp,
-            ]);
             return $this->success('4 digit code send to your email');
         } catch (Exception $e) {
             return $this->error('Some Think went worng');
