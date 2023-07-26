@@ -176,39 +176,18 @@ class UserController extends Controller
             $lastName = $updateRequest->lastName;
             $mobile = $updateRequest->mobile;
             $password = $updateRequest->password;
+            $haveAvatarUrl = $updateRequest->haveAvatar;
 
-            DB::beginTransaction(); // Start the database transaction
-            if($profile) {
-                $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
-                $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-
-                $currentPhoto = User::where('id', '=', $id)
-                    ->select('avatar')
-                    ->first();
-
-                if($currentPhoto) {
-                    $avatarFilename = $currentPhoto->avatar;
-                    $filePath = public_path('avatars/' . $avatarFilename);
-                    if (File::exists($filePath)) {
-                        if(File::delete($filePath)) {
-                            $profileImage->save(public_path('avatars/'.$profileName));
-                        }
-                    } else {
-                        $profileImage->save(public_path('avatars/'.$profileName));
-                    }
-                } else {
-                    $profileImage->save(public_path('avatars/'.$profileName));
-                }
+            DB::beginTransaction();
+            if ($profile) {
+                $profileName = $id.'-'.time() . '-' . rand(100, 900) . '.' . $profile->getClientOriginalExtension();
+                $avatarPath = $request->file('avatar')->storeAs('temp_uploads', $profileName);
+                ProfileUpdateJob::dispatch($fristName, $lastName, $mobile, $password, $profileName, $id, $avatarPath);
             } else {
-                $profileName = $updateRequest->haveAvatar;
+                ProfileUpdateJob::dispatch($fristName, $lastName, $mobile, $password, $haveAvatarUrl, $id, null);
             }
 
-            ProfileUpdateJob::dispatch($id, $fristName, $lastName, $mobile, $password, $profileName);
-
-            DB::commit(); // All database operations are successful, commit the transaction
+            DB::commit();
 
             return $this->success('Profile Updated', 200);
         } catch (Exception $e) {
