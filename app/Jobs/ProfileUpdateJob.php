@@ -23,6 +23,9 @@ class ProfileUpdateJob implements ShouldQueue
     protected $password;
     protected $profileName;
     protected $avatarPath;
+
+    public $tries = 3;
+    public $retryAfter = 60;
     /**
      * Create a new job instance.
      */
