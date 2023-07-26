@@ -9,6 +9,7 @@ use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\UserSendOTPToEmailRequest;
+use App\Jobs\ProfileUpdateJob;
 use App\Jobs\SendEmailOTPJob;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -171,8 +172,12 @@ class UserController extends Controller
             $id = $request->header('id');
             $profile = $request->file('avatar');
 
-            DB::beginTransaction(); // Start the database transaction
+            $fristName = $updateRequest->fristName;
+            $lastName = $updateRequest->lastName;
+            $mobile = $updateRequest->mobile;
+            $password = $updateRequest->password;
 
+            DB::beginTransaction(); // Start the database transaction
             if($profile) {
                 $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
                 $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
@@ -180,31 +185,29 @@ class UserController extends Controller
                     $constraint->upsize();
                 });
 
-                if($profileImage->save(public_path('avatars/'.$profileName))) {
-                    $currentPhoto = User::where('id', '=', $id)
-                        ->select('avatar')
-                        ->first();
+                $currentPhoto = User::where('id', '=', $id)
+                    ->select('avatar')
+                    ->first();
 
-                    if($currentPhoto) {
-                        $avatarFilename = $currentPhoto->avatar;
-                        $filePath = public_path('avatars/' . $avatarFilename);
-                        if (File::exists($filePath)) {
-                            File::delete($filePath);
+                if($currentPhoto) {
+                    $avatarFilename = $currentPhoto->avatar;
+                    $filePath = public_path('avatars/' . $avatarFilename);
+                    if (File::exists($filePath)) {
+                        if(File::delete($filePath)) {
+                            $profileImage->save(public_path('avatars/'.$profileName));
                         }
+                    } else {
+                        $profileImage->save(public_path('avatars/'.$profileName));
                     }
+                } else {
+                    $profileImage->save(public_path('avatars/'.$profileName));
                 }
             } else {
-                $profileName = $updateRequest->haveAvatarUrl;
+                $profileName = $updateRequest->haveAvatar;
             }
 
-            User::where('id','=', $id)
-            ->update([
-                'fristName' => $updateRequest->fristName,
-                'lastName' => $updateRequest->lastName,
-                'mobile' => $updateRequest->mobile,
-                'password' => $updateRequest->password,
-                'avatar' =>  $profileName
-            ]);
+            ProfileUpdateJob::dispatch($id, $fristName, $lastName, $mobile, $password, $profileName);
+
             DB::commit(); // All database operations are successful, commit the transaction
 
             return $this->success('Profile Updated', 200);
