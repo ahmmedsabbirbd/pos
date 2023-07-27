@@ -172,27 +172,50 @@ class UserController extends Controller
             $id = $request->header('id');
             $profile = $request->file('avatar');
 
-            $fristName = $updateRequest->fristName;
-            $lastName = $updateRequest->lastName;
-            $mobile = $updateRequest->mobile;
-            $password = $updateRequest->password;
-            $haveAvatarUrl = $updateRequest->haveAvatar;
+            if($profile) {
+                $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
+                $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
 
-            DB::beginTransaction();
-            if ($profile) {
-                $profileName = $id.'-'.time() . '-' . rand(100, 900) . '.' . $profile->getClientOriginalExtension();
-                $avatarPath = $request->file('avatar')->storeAs('temp_uploads', $profileName);
-                ProfileUpdateJob::dispatch($fristName, $lastName, $mobile, $password, $profileName, $id, $avatarPath);
+                $currentPhoto = User::where('id', '=', $id)
+                    ->select('avatar')
+                    ->first();
+
+                if($currentPhoto) {
+                    $avatarFilename = $currentPhoto->avatar;
+                    $filePath = public_path('avatars/' . $avatarFilename);
+                    if (File::exists($filePath)) {
+                        if(File::delete($filePath)) {
+                            $profileImage->save(public_path('avatars/'.$profileName));
+                        }
+                    } else {
+                        $profileImage->save(public_path('avatars/'.$profileName));
+                    }
+                } else {
+                    $profileImage->save(public_path('avatars/'.$profileName));
+                }
+
             } else {
-                ProfileUpdateJob::dispatch($fristName, $lastName, $mobile, $password, $haveAvatarUrl, $id, null);
+                $profileName = $updateRequest->haveAvatar;
             }
+
+            User::where('id','=', $id)
+                ->update([
+                    'fristName' => $updateRequest->fristName,
+                    'lastName' => $updateRequest->lastName,
+                    'mobile' => $updateRequest->mobile,
+                    'password' => $updateRequest->password,
+                    'avatar' =>  $profileName
+                ]);
 
             DB::commit();
 
             return $this->success('Profile Updated', 200);
         } catch (Exception $e) {
             DB::rollback(); // An error occurred, rollback the transaction
-            return $this->error('Profile no Updated');
+            return $this->error($e);
         }
     }
 }
