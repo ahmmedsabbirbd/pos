@@ -16,5 +16,6 @@ class User extends Model
         'mobile',
         'password',
         'otp',
+        'divice_token'
     ];
 }

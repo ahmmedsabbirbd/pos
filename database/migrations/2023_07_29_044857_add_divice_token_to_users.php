@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->after('otp', function (Blueprint $table) {
-                $table->string('divice_token', 30)->nullable();
+                $table->string('divice_token', 200)->nullable();
             });
         });
     }

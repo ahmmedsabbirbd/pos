@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 // Page Routes
 Route::get('/userLogin',[UserController::class,'LoginPage'])->name('login');
 Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
@@ -50,6 +51,8 @@ Route::delete("/delete-customer",[CustomerController::class,'CustomerDelete'])->
 Route::post("/update-customer",[CustomerController::class,'CustomerUpdate'])->middleware([TokenVerificationMiddleware::class]);
 Route::post("/customer-by-id",[CustomerController::class,'CustomerByID'])->middleware([TokenVerificationMiddleware::class]);
 
+Route::post('/store-token', [CustomerController::class, 'updateDeviceToken'])->name('store.token')->middleware([TokenVerificationMiddleware::class]);;
+Route::post('/send-web-notification', [CustomerController::class, 'sendNotification'])->name('send.web-notification')->middleware([TokenVerificationMiddleware::class]);;
 
 
 // Category API
@@ -85,3 +88,5 @@ Route::get( 'auth/facebook/callback', [SocialiteController::class, 'facebookCall
 // Login With google
 Route::get( 'auth/google', [SocialiteController::class, 'googleRedirect'] )->name( 'google.login' );
 Route::get( 'auth/google/callback', [SocialiteController::class, 'googleCallback'] );
+
+//Route::get( '/{slug}', [PageController::class, 'show_custom_page'] );
