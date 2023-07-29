@@ -25,7 +25,7 @@ Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
 Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
 Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware(TokenVerificationMiddleware::class);
-Route::get('/user-profile',[UserController::class,'ProfilePage'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/userProfile',[UserController::class,'ProfilePage'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/photo-update',[UserController::class,'processImage'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/dashboard-image',[UserController::class,'DashBoardImage'])->middleware(TokenVerificationMiddleware::class);
 Route::get('/categoryPage',[CategoryController::class,'CategoryPage'])->middleware([TokenVerificationMiddleware::class]);
