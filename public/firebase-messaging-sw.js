@@ -7,12 +7,13 @@ importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js');
 Initialize the Firebase app in the service worker by passing in the messagingSenderId.
 */
 firebase.initializeApp({
-    apiKey: "AIzaSyCsPpEUrvUh5K2e3B3LLxwSJPKx4xIPOiY",
-    authDomain: "push-notification-017.firebaseapp.com",
-    projectId: "push-notification-017",
-    storageBucket: "push-notification-017.appspot.com",
-    messagingSenderId: "341911169841",
-    appId: "1:341911169841:web:5e12a4948d88a8f5819e10"
+    apiKey: "AIzaSyCkj1gm3aYruqct9F6DvkshEMOBIkyECrY",
+    authDomain: "notification-3b471.firebaseapp.com",
+    projectId: "notification-3b471",
+    storageBucket: "notification-3b471.appspot.com",
+    messagingSenderId: "528992337610",
+    appId: "1:528992337610:web:2872ce8029c36ffbc07e33",
+    measurementId: "G-8HJ6Y9RGG1"
 });
 
 // Retrieve an instance of Firebase Messaging so that it can handle background
@@ -20,13 +21,22 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
     console.log("Message received.", payload);
-    const title = "Hello world is awesome";
+    const title = "Hello world fdsafsad awesome";
     const options = {
-        body: "Your notificaiton message .",
+        body: "Your notificaiton message.",
         icon: "/firebase-logo.png",
+        data: {
+            url: "https://example.com", // Replace with the URL you want to open when the user clicks the notification.
+        },
     };
     return self.registration.showNotification(
         title,
         options,
     );
+});
+
+self.addEventListener('notificationclick', event => {
+    const url = event.notification.data.url;
+    event.notification.close();
+    event.waitUntil(clients.openWindow(url));
 });

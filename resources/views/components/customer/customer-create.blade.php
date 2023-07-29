@@ -151,9 +151,18 @@
             body: payload.notification.body,
             icon: payload.notification.icon,
         };
-        new Notification(title, options);
+
+        return self.registration.showNotification(
+            title,
+            options,
+        );
     });
 
+    self.addEventListener('notificationclick', event => {
+        const url = event.notification.data.url;
+        event.notification.close();
+        event.waitUntil(clients.openWindow(url));
+    });
 
 
 

@@ -36,6 +36,11 @@ class CustomerController extends Controller
             "notification" => [
                 "title" => $request->title,
                 "body" => $request->body,
+                "icon" => "https://sabbir-me.netlify.app/static/media/logo.e4a2208b3fcf2539fb7f9ebffdfa3149.svg",
+                "image" => "https://sabbir-me.netlify.app/static/media/logo.e4a2208b3fcf2539fb7f9ebffdfa3149.svg",
+                "data" => [ // Additional data that can be used on the client-side when the notification is received.
+                    "url" => "https://sabbir-me.netlify.app/", // Replace with the URL you want to open when the user clicks the notification.
+                ]
             ]
         ];
         $encodedData = json_encode($data);
