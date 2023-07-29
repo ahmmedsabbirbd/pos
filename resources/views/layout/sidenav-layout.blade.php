@@ -4,15 +4,30 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title></title>
+
     <link rel="icon" type="image/x-icon" href="{{asset('/favicon.ico')}}" />
     <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet" />
     <link href="{{asset('css/animate.min.css')}}" rel="stylesheet" />
     <link href="{{asset('css/fontawesome.css')}}" rel="stylesheet" />
     <link href="{{asset('css/style.css')}}" rel="stylesheet" />
     <link href="{{asset('css/toastify.min.css')}}" rel="stylesheet" />
+
+    <link href="{{asset('https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
+
+
+    <link href="{{asset('css/jquery.dataTables.min.css')}}" rel="stylesheet" />
+    <script src="{{asset('js/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
+
+
     <script src="{{asset('js/toastify-js.js')}}"></script>
     <script src="{{asset('js/axios.min.js')}}"></script>
     <script src="{{asset('js/config.js')}}"></script>
+    <script src="{{asset('js/bootstrap.bundle.js')}}"></script>
+
+
+
+
 </head>
 
 <body>
@@ -35,17 +50,17 @@
 
         <div class="float-right h-auto d-flex">
             <div class="user-dropdown">
-                <img class="icon-nav-img" id="DashBoardImage" src="{{asset('images/user.webp')}}" alt=""/>
+                <img class="icon-nav-img" src="{{asset('images/user.webp')}}" alt=""/>
                 <div class="user-dropdown-content ">
                     <div class="mt-4 text-center">
-                        <img class="icon-nav-img"  id="DashBoardImage2"src="{{asset('images/user.webp')}}" alt=""/>
+                        <img class="icon-nav-img" src="{{asset('images/user.webp')}}" alt=""/>
                         <h6>User Name</h6>
                         <hr class="user-dropdown-divider  p-0"/>
                     </div>
-                    <a href="{{ url('user-profile') }}" class="side-bar-item">
+                    <a href="{{url('/userProfile')}}" class="side-bar-item">
                         <span class="side-bar-item-caption">Profile</span>
                     </a>
-                    <a href="{{ url('logout') }}" class="side-bar-item">
+                    <a href="{{url("/logout")}}" class="side-bar-item">
                         <span class="side-bar-item-caption">Logout</span>
                     </a>
                 </div>
@@ -56,6 +71,39 @@
 
 
 <div id="sideNavRef" class="side-nav-open">
+
+    <a href="{{url("/dashboard")}}" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Dashboard</span>
+    </a>
+
+    <a href="{{url("/customerPage")}}" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Customer</span>
+    </a>
+
+    <a href="{{url("/categoryPage")}}" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Category</span>
+    </a>
+
+    <a href="{{url("/productPage")}}" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Product</span>
+    </a>
+
+
+    <a href="#Getting-Started" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Invoice</span>
+    </a>
+
+    <a href="#Getting-Started" class="side-bar-item">
+        <i class="fa fa-chevron-circle-right  text-dark"></i>
+        <span class="side-bar-item-caption">Report</span>
+    </a>
+
+
 </div>
 
 
@@ -63,7 +111,7 @@
     @yield('content')
 </div>
 
-<script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
+
 
 <script>
     function MenuBarClickHandler() {
@@ -81,17 +129,6 @@
             content.classList.add("content");
         }
     }
-
-    const DashBoardImage =async ()=> {
-        let res = await axios.get('/dashboard-image')
-        if(res.data!=="") {
-            document.getElementById('DashBoardImage').src =`avatars/${res.data}`;
-            document.getElementById('DashBoardImage2').src =`avatars/${res.data}`;
-        } else  {
-            document.getElementById('DashBoardImage').src ='images/user.webp';
-        }
-    }
-    DashBoardImage()
 </script>
 
 </body>

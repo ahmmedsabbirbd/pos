@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    function CategoryPage(){
+        return view('pages.dashboard.category-page');
+    }
+
     function CategoryList(Request $request){
         $user_id=$request->header('id');
         return Category::where('user_id',$user_id)->get();
+    }
+
+    function CategoryByID(Request $request){
+        $customer_id=$request->input('id');
+        $user_id=$request->header('id');
+        return Category::where('id',$customer_id)->where('user_id',$user_id)->first();
     }
 
     function CategoryCreate(Request $request){

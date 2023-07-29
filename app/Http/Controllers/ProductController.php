@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
+    function ProductPage(){
+        return view('pages.dashboard.product-page');
+    }
     function CreateProduct(Request $request)
     {
         $user_id=$request->header('id');
@@ -52,6 +55,11 @@ class ProductController extends Controller
         return Product::where('user_id',$user_id)->get();
     }
 
+    function ProductByID(Request $request){
+        $customer_id=$request->input('id');
+        $user_id=$request->header('id');
+        return Product::where('id',$customer_id)->where('user_id',$user_id)->first();
+    }
     function UpdateProduct(Request $request)
     {
         $user_id=$request->header('id');
