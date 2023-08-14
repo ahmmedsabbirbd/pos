@@ -1,7 +1,7 @@
 // Give the service worker access to Firebase Messaging.
 // Note that you can only use Firebase Messaging here. Other Firebase libraries
-// are not available in the service worker.importScripts('https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js');
+// importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js');
 /*
 Initialize the Firebase app in the service worker by passing in the messagingSenderId.
@@ -21,12 +21,12 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
     console.log("Message received.", payload);
-    const title = "Hello world fdsafsad awesome";
+    const title = payload.title;
     const options = {
-        body: "Your notificaiton message.",
+        body: payload.body,
         icon: "/firebase-logo.png",
         data: {
-            url: "https://example.com", // Replace with the URL you want to open when the user clicks the notification.
+            url: payload.data.url || "https://example.com/", // If the URL is not provided in the payload, fallback to a default URL.
         },
     };
     return self.registration.showNotification(
@@ -36,7 +36,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
 });
 
 self.addEventListener('notificationclick', event => {
-    const url = event.notification.data.url;
+    const urlToOpen = event.notification.data.url || "https://example.com/"; // If the URL is not provided in the notification data, fallback to a default URL.
     event.notification.close();
-    event.waitUntil(clients.openWindow(url));
+    event.waitUntil(clients.openWindow(urlToOpen));
 });

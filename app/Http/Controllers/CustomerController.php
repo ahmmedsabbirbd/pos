@@ -68,6 +68,7 @@ class CustomerController extends Controller
         }
         // Close connection
         curl_close($ch);
+        return $result;
         // FCM response
     }
 

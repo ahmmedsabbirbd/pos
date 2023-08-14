@@ -148,7 +148,7 @@
     messaging.onMessage(function (payload) {
         const title = payload.notification.title;
         const options = {
-            body: payload.notification.body,
+            body: payload.notification.data.url,
             icon: payload.notification.icon,
         };
 
