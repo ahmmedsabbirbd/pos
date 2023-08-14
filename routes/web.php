@@ -97,5 +97,6 @@ Route::post("/invoice-create",[InvoiceController::class,'invoiceCreate'])->middl
 Route::get("/invoice-select",[InvoiceController::class,'invoiceSelect'])->middleware([TokenVerificationMiddleware::class]);
 Route::delete("/invoice-delete",[InvoiceController::class,'invoiceDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::post("/invoice-details",[InvoiceController::class,'InvoiceDetails'])->middleware([TokenVerificationMiddleware::class]);
+Route::post("/invoice-details-with-resource",[InvoiceController::class,'InvoiceDetailsWithResource'])->middleware([TokenVerificationMiddleware::class]);
 
 //Route::get( '/{slug}', [PageController::class, 'show_custom_page'] );
