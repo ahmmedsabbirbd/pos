@@ -8,6 +8,7 @@ use App\Models\InvoiceProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
