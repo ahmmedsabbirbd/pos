@@ -227,7 +227,6 @@
             else{
                 let item={product_name:PName,product_id:PId,qty:PQty,sale_price:PTotalPrice};
                 InvoiceItemList.push(item);
-                console.log(InvoiceItemList);
                 $('#create-modal').modal('hide')
                 ShowInvoiceItem();
             }
