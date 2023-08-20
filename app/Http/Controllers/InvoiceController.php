@@ -88,6 +88,7 @@ class InvoiceController extends Controller
 
         $invoiceProduct=InvoiceProduct::where('invoice_id',$request->input('inv_id'))
             ->where('user_id',$user_id)
+            ->with('product')
             ->get();
 
         return array(

@@ -11,6 +11,10 @@
     <link href="{{asset('css/fontawesome.css')}}" rel="stylesheet" />
     <link href="{{asset('css/style.css')}}" rel="stylesheet" />
     <link href="{{asset('css/toastify.min.css')}}" rel="stylesheet" />
+    <script src="{{asset('js/toastify-js.js')}}"></script>
+    <script src="{{asset('js/axios.min.js')}}"></script>
+    <script src="{{asset('js/config.js')}}"></script>
+
 
     <link href="{{asset('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css')}}" rel="stylesheet" />
 
@@ -18,15 +22,7 @@
     <link href="{{asset('css/jquery.dataTables.min.css')}}" rel="stylesheet" />
     <script src="{{asset('js/jquery-3.7.0.min.js')}}"></script>
     <script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
-
-
-    <script src="{{asset('js/axios.min.js')}}"></script>
-    <script src="{{asset('js/config.js')}}"></script>
     <script src="{{asset('js/bootstrap.bundle.js')}}"></script>
-
-
-
-
 </head>
 
 <body>
@@ -100,7 +96,7 @@
         <span class="side-bar-item-caption">Invoice</span>
     </a>
 
-    <a href="#Getting-Started" class="side-bar-item">
+    <a href="{{url('/reportPage')}}" class="side-bar-item">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span class="side-bar-item-caption">Report</span>
     </a>
