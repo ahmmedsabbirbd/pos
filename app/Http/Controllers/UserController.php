@@ -9,7 +9,6 @@ use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\UserSendOTPToEmailRequest;
-use App\Jobs\ProfileUpdateJob;
 use App\Jobs\SendEmailOTPJob;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -17,7 +16,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -170,33 +168,32 @@ class UserController extends Controller
     public function profileUpdate(Request $request, ProfileUpdateRequest $updateRequest) {
         try {
             $id = $request->header('id');
-            $profile = $request->file('avatar');
+            $profileImage = $request->file('avatar');
 
-            if($profile) {
-                $profileName = time().'-'.rand(10000000, 90000000).'.'.$profile->getClientOriginalExtension();
-                $profileImage = Image::make($profile)->resize(150, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+            if($profileImage) {
+                $profileName = $id.'_'.rand(10000000, 90000000).'.'.$profileImage->getClientOriginalExtension();
 
-                $currentPhoto = User::where('id', '=', $id)
-                    ->select('avatar')
-                    ->first();
+                if ($profileImage->getSize() <= 100 * 1024) {
+                    $currentPhoto = User::where('id', '=', $id)
+                        ->select('avatar')
+                        ->first();
 
-                if($currentPhoto) {
-                    $avatarFilename = $currentPhoto->avatar;
-                    $filePath = public_path('avatars/' . $avatarFilename);
-                    if (File::exists($filePath)) {
-                        if(File::delete($filePath)) {
-                            $profileImage->save(public_path('avatars/'.$profileName));
+                    if ($currentPhoto) {
+                        $avatarFilename = $currentPhoto->avatar;
+                        $filePath = public_path('avatars/' . $avatarFilename);
+                        if (File::exists($filePath)) {
+                            if (File::delete($filePath)) {
+                                $profileImage->move(public_path('avatars'), $profileName);
+                            }
+                        } else {
+                            $profileImage->move(public_path('avatars'), $profileName);
                         }
                     } else {
-                        $profileImage->save(public_path('avatars/'.$profileName));
+                        $profileImage->move(public_path('avatars'), $profileName);
                     }
                 } else {
-                    $profileImage->save(public_path('avatars/'.$profileName));
+                    return $this->error('Image size exceeds the limit 100kb',);
                 }
-
             } else {
                 $profileName = $updateRequest->haveAvatar;
             }
